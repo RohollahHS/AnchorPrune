@@ -146,9 +146,9 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
   --batch_size 1 \
   --log_samples \
   --output_path ${SAVE_LOGS_DIR} \
-  ${OPTIONAL_ARGS} 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${K}_kmin${KMIN}_${TASKS}.log"
+  ${OPTIONAL_ARGS}
 
 
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco --k 128 --kmin 20
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco+
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcocog
+# k=128
+# kmin=20
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco,refcoco+,refcocog --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"

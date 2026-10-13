@@ -112,7 +112,7 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             return x[0], x[0]
 
         qa = {}
-        default_save_dir = os.path.join(self.pretrained, 'eval_logs', 'question_answer_pairs')
+        default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")

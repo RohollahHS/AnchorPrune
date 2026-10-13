@@ -36,9 +36,7 @@ while true; do
          --mail-user=rohollah903@gmail.com --mail-type=ALL \
     srun bash -c --overlap '
       start=$SECONDS
-      timeout -k 60 115m bash "$PROJECTS_DIR/voco_llama/scripts/slurm/eval.sh" \
-        --model_name "$M" --tasks "$T" --qa_id "${M}_${T}" \
-        >> "$SLURM_OUTPUTS/interactive_eval_${M}__${T}.log" 2>&1
+      timeout -k 60 115m bash bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco,refcoco+,refcocog --k 128 --kmin 20 >> "$SLURM_OUTPUTS/interactive_eval_${M}__${T}.log" 2>&1
       # ran < 1:50:00 (6600s) -> finished (or failed early) -> exit 0
       # ran >= 1:50:00        -> was cut off -> exit 100 to resubmit
       [ $((SECONDS - start)) -lt 6600 ] && exit 0 || exit 100
