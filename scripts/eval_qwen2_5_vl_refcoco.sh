@@ -123,14 +123,18 @@ export SAVE_LOGS_DIR=${OUTPUT_DIR}/AnchorPrune/eval_logs
 
 export GPUS_PER_NODE=$(nvidia-smi -L | wc -l)
 
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+
 accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
-        --model qwen2_5_vl \
-        --model_args ${MODEL_ARGS} \
-        --tasks ${TASKS} \
-        --batch_size 1 \
-        --log_samples \
-        --output_path ${SAVE_LOGS_DIR} \
-        ${OPTIONAL_ARGS}
+  --model qwen2_5_vl \
+  --model_args ${MODEL_ARGS} \
+  --tasks ${TASKS} \
+  --batch_size 1 \
+  --log_samples \
+  --output_path ${SAVE_LOGS_DIR} \
+  ${OPTIONAL_ARGS} 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${K}_kmin${KMIN}_${TASKS}.log"
 
 
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco
