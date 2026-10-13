@@ -129,9 +129,10 @@ export SAVE_LOGS_DIR=${OUTPUT_DIR}/AnchorPrune/eval_logs
 
 export GPUS_PER_NODE=$(nvidia-smi -L | wc -l)
 
-# export TRANSFORMERS_OFFLINE=1
-# export HF_HUB_OFFLINE=1
-# export HF_DATASETS_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
+export LMMS_EVAL_DATASETS_CACHE="/scratch/rohhs/huggingface/datasets"
 
 accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
   --model qwen2_5_vl \
