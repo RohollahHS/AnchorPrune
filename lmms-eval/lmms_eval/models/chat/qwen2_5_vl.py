@@ -210,7 +210,7 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
                 eval_logger.debug(f"Question: {context}")
                 eval_logger.debug(f"Model Response: {ans}")
             # reorder this group of results back to original unsorted form
-            if iter % 100 == 0:
+            if iter % 200 == 0:
                 print(f"[{iter}/{num_iters}] Model Responding...")
             iter += 1
         res = re_ords.get_original(res)
