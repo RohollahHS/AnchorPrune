@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+set -x
+
+# Check if SLURM_JOB_NAME contains "interactive" or "debug"
+if [[ "$SLURM_JOB_NAME" == *interactive* || "$SLURM_JOB_NAME" == *debug* ]]; then
+    export REMOTE_DEBUG=1
+else
+    export REMOTE_DEBUG=0
+fi
+
+# export REMOTE_DEBUG=0
+echo "REMOTE_DEBUG: $REMOTE_DEBUG"
+
+START_TIME_LOCAL=$(date +%s)
+OFFSET=$((10 * 3600 + 30 * 60))
+TARGET_TIME=$((START_TIME_LOCAL + OFFSET))
+echo "START TIME: $(date -d "@$TARGET_TIME")"
+export START_TIME=$(date +%s)
+
+############### DATA ################
+SRUN_ARGS="--ntasks=$SLURM_NNODES --ntasks-per-node=1"
+XDG_CACHE_HOME_TEMP=${SLURM_TMPDIR}/.cache
+XDG_CONFIG_HOME_TEMP=${SLURM_TMPDIR}/.config
+TRITON_CACHE_DIR_TEMP=${SLURM_TMPDIR}/.cache/triton
+TMPDIR_TEMP=${SLURM_TMPDIR}/.cache/tmp
+VLLM_CACHE_ROOT_TEMP=${SLURM_TMPDIR}/vllm_cache
+VLLM_CONFIG_ROOT_TEMP=${SLURM_TMPDIR}/vllm_config
+VLLM_ASSETS_CACHE_TEMP=${SLURM_TMPDIR}/assets_cache
+FLASHINFER_WORKSPACE_BASE_TEMP=${SLURM_TMPDIR}/flashinfer
+srun $SRUN_ARGS mkdir -p $XDG_CACHE_HOME_TEMP
+srun $SRUN_ARGS mkdir -p $XDG_CONFIG_HOME_TEMP
+srun $SRUN_ARGS mkdir -p $TRITON_CACHE_DIR_TEMP
+srun $SRUN_ARGS mkdir -p $TMPDIR_TEMP
+srun $SRUN_ARGS mkdir -p $VLLM_CACHE_ROOT_TEMP
+srun $SRUN_ARGS mkdir -p $VLLM_CONFIG_ROOT_TEMP
+srun $SRUN_ARGS mkdir -p $VLLM_ASSETS_CACHE_TEMP
+srun $SRUN_ARGS mkdir -p $FLASHINFER_WORKSPACE_BASE_TEMP
+export XDG_CACHE_HOME=${XDG_CACHE_HOME_TEMP}
+export XDG_CONFIG_HOME=${XDG_CONFIG_HOME_TEMP}
+export TRITON_CACHE_DIR=${TRITON_CACHE_DIR_TEMP}
+export TMPDIR=${TMPDIR_TEMP}
+export VLLM_CACHE_ROOT=${VLLM_CACHE_ROOT_TEMP}
+export VLLM_CONFIG_ROOT=${VLLM_CONFIG_ROOT_TEMP}
+export VLLM_ASSETS_CACHE=${VLLM_ASSETS_CACHE_TEMP}
+export FLASHINFER_WORKSPACE_BASE=${FLASHINFER_WORKSPACE_BASE_TEMP}
+################################## ENV ##################################
+if [[ "$HEADER" == *"narv"* ]]; then
+    echo "narv"
+    VENVS_DIR=${PROJECTS_DIR}/venvs
+else
+    VENVS_DIR=${SCRATCH}/venvs
+    echo "not narv"
+fi
+
+cd ${PROJECTS_DIR}/AnchorPrune
+deactivate
+module purge all
+module load StdEnv/2023 gcc/12.3
+module load cuda/12.6
+module load java
+source ${VENVS_DIR}/qwen/bin/activate
+
+K="64"
+KMIN="1"
+TASKS=refcoco,refcoco+,refcocog
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --k)
+      K="$2"
+      shift 2
+      ;;
+    --km|--kmin)
+      KMIN="$2"
+      shift 2
+      ;;
+    --t|--tasks)
+      TASKS="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Use --help for usage information"
+      exit 1
+      ;;
+  esac
+done
+
+# ========================================================
+
+REPO_ROOT=${PROJECTS_DIR}/AnchorPrune
+LMMS_ROOT="${REPO_ROOT}/lmms-eval"
+
+NPROC="${NPROC:-4}"
+PORT="${PORT:-29641}"
+MODEL="${MODEL:-Qwen/Qwen2.5-VL-7B-Instruct}"
+OUT_ROOT=/scratch/rohhs/projects/voco_llava/AnchorPrune
+
+OUT="${OUT_ROOT}/${TASKS}/k${K}_kmin${KMIN}"
+
+if [[ "${MODEL,,}" == *qwen* ]]; then
+    export BBOX_COORD_FORMAT=pixel
+    export REFCOCO_PROMPT_STYLE=nuwa
+fi
+
+export PYTHONPATH="${REPO_ROOT}:${LMMS_ROOT}:${PYTHONPATH:-}"
+
+MODEL_ARGS_LIST=(
+  "pretrained=${MODEL}"
+  "attn_implementation=sdpa"
+  "use_cache=true"
+  "prune=true"
+  "prune_k_total=${K}"
+  "prune_anchor_k=${KMIN}"
+)
+MODEL_ARGS="$(IFS=,; echo "${MODEL_ARGS_LIST[*]}")"
+
+echo "[AnchorPrune] Qwen2.5-VL-7B | tasks=${TASKS} | K=${K} | KMIN=${KMIN} | output=${OUT}"
+cd "${LMMS_ROOT}"
+
+OUTPUT_DIR=${SCRATCH}/projects/voco_llava
+export SAVE_LOGS_DIR=${OUTPUT_DIR}/AnchorPrune/eval_logs
+
+export GPUS_PER_NODE=$(nvidia-smi -L | wc -l)
+
+accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
+        --model qwen2_5_vl \
+        --model_args ${MODEL_ARGS} \
+        --tasks ${TASKS} \
+        --batch_size 1 \
+        --log_samples \
+        --output_path ${SAVE_LOGS_DIR} \
+        ${OPTIONAL_ARGS}
+
+
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco+
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcocog

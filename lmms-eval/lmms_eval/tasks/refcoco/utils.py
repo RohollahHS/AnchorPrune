@@ -1,7 +1,9 @@
+import os
 from PIL import ImageDraw
-from pycocoevalcap.eval import Bleu, Cider, COCOEvalCap, Meteor, Rouge
-from pycocoevalcap.tokenizer.ptbtokenizer import PTBTokenizer
-from pycocotools.coco import COCO
+if not int(os.getenv("LOCAL", 0)):
+    from pycocoevalcap.eval import Bleu, Cider, COCOEvalCap, Meteor, Rouge
+    from pycocoevalcap.tokenizer.ptbtokenizer import PTBTokenizer
+    from pycocotools.coco import COCO
 
 COCO_METRICS = ["Bleu_4", "Bleu_3", "Bleu_2", "Bleu_1", "METEOR", "ROUGE_L", "CIDEr"]  # , "SPICE"]
 
