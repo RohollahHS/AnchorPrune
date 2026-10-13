@@ -29,6 +29,76 @@ def _qwen_prune_verbose() -> bool:
     v = os.environ.get("QWEN_PRUNE_VERBOSE", "0")
     return str(v).strip().lower() in {"1", "true", "t", "yes", "y", "on"}
 
+import re
+import json
+import glob
+import numpy as np
+import hashlib
+
+def load_json_with_fallback(file_path):
+    # First: try normal JSON loading
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Warning: invalid JSON in {file_path}")
+        print(f"JSON error: {e}")
+        print("Attempting to recover valid key/value pairs...")
+    # Fallback: recover valid "key": value pairs
+    data = {}
+    # Match lines containing a valid JSON string key followed by a value.
+    pattern = re.compile(r'^\s*"((?:\\.|[^"\\])*)"\s*:\s*(.*?)(?:,\s*)?$')
+    with open(file_path, "r") as f:
+        for line_number, line in enumerate(f, 1):
+            match = pattern.match(line)
+            if not match:
+                continue
+            key = match.group(1)
+            value_str = match.group(2).strip()
+            try:
+                # Decode the JSON key properly
+                key = json.loads(f'"{key}"')
+                # Decode the value
+                value = json.loads(value_str)
+                data[key] = value
+            except json.JSONDecodeError:
+                # Invalid key/value -> discard it
+                continue
+    print(f"Recovered {len(data)} valid key/value pairs.")
+    return data
+
+def merge_qa_dicts(qa_dir):
+    QA_ID = str(os.getenv("QA_ID", 0))
+    pattern = os.path.join(qa_dir, f"qa_{QA_ID}_*.json")
+    merged = {}
+    for file_path in glob.glob(pattern):
+        print(
+            f"{50*'='}\n"
+            f"Loading... {file_path}\n"
+            f"{50*'='}"
+        )
+        data = load_json_with_fallback(file_path)
+        merged.update(data)   # merges dictionaries
+    return merged
+
+
+def save_json_file(file_path, data):
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def image_to_key(img):
+    img_array = np.array(img)
+    return hashlib.sha256(img_array.tobytes()).hexdigest()
+
+
+def format_time(seconds):
+    """Convert seconds to HH:MM:SS string."""
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+
 
 @register_model("qwen2_5_vl_chat")
 class Qwen2_5_VL(Qwen2_5_VLSimple):
@@ -40,6 +110,22 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         # A dummy collate here to sort by doc id
         def _collate(x):
             return x[0], x[0]
+
+        qa = {}
+        default_save_dir = os.path.join(self.pretrained, 'eval_logs', 'question_answer_pairs')
+        os.makedirs(default_save_dir, exist_ok=True)
+        QA_ID = str(os.getenv('QA_ID', 0))
+        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")
+        request_keys = []
+        if self.rank == 0:
+            print(f"QA_ID: {QA_ID}")
+            print(f"os.path.exists(file_path): {os.path.exists(file_path)}")
+    
+        if (self._model is None or os.path.exists(file_path)) and not int(os.getenv("LOCAL", 0)):
+            qa = merge_qa_dicts(os.path.dirname(file_path))
+            if self.rank == 0:
+                print(f"reading {len(qa)} qa pairs")
+            request_keys = list(qa.keys())
 
         # we group requests by their generation_kwargs,
         # so that we don't try to execute e.g. greedy sampling and temp=0.8 sampling
@@ -69,6 +155,28 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             visuals = self.flatten(visuals)
             videos = self.flatten(videos)
             gen_kwargs = all_gen_kwargs[0]
+
+            img_key = ''
+            sample = self.task_dict[task[0]][split[0]][doc_id[0]]
+            if 'filename' in sample:
+                try:
+                    img_key = self.task_dict[task[0]][split[0]][doc_id[0]]['file_name']
+                except:
+                    img_key = image_to_key(visuals[0])
+            elif isinstance(visuals, list) and visuals != []:
+                img_key = image_to_key(visuals[0])
+            elif isinstance(videos, list) and videos != []:
+                img_key = videos[0]
+            else:
+                img_key = image_to_key(visuals)
+            request_key = ctx[0].replace(" ", "_") + "_" + str(doc_id[0]) + "_" + img_key
+
+            request_keys.append(request_key)
+
+            if request_key in qa.keys():
+                res.append(qa[request_key])
+                iter += 1
+                continue
 
             # Apply chat template
             video_kwargs = {
@@ -210,9 +318,14 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
                 eval_logger.debug(f"Question: {context}")
                 eval_logger.debug(f"Model Response: {ans}")
             # reorder this group of results back to original unsorted form
-            if iter % 200 == 0:
+            qa[request_key] = answers[0]
+            save_json_file(file_path, qa)
+
+            if self.rank == 0 and iter % 200 == 0:
                 print(f"[{iter}/{num_iters}] Model Responding...")
+            
             iter += 1
+
         res = re_ords.get_original(res)
 
         # Calculate average speed
