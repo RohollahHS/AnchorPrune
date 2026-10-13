@@ -52,9 +52,10 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         )
         chunks = re_ords.get_batched(n=self.batch_size, batch_fn=None)
         num_iters = len(requests) // self.batch_size if len(requests) % self.batch_size == 0 else len(requests) // self.batch_size + 1
-        pbar = tqdm(total=num_iters, disable=(self.rank != 0), desc="Model Responding")
+        # pbar = tqdm(total=num_iters, disable=(self.rank != 0), desc="Model Responding")
         total_elapsed_time = 0
         total_tokens = 0
+        iter = 0
         for chunk in chunks:
             ctx, doc_to_messages, all_gen_kwargs, doc_id, task, split = zip(*chunk)
             chat_messages = [doc_to_messages[idx](self.task_dict[task][split][ids]) for idx, (ids, task, split) in enumerate(zip(doc_id, task, split))]
@@ -209,7 +210,9 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
                 eval_logger.debug(f"Question: {context}")
                 eval_logger.debug(f"Model Response: {ans}")
             # reorder this group of results back to original unsorted form
-            pbar.update(1)
+            if iter % 100 == 0:
+                print(f"[{iter}/{num_iters}] Model Responding...")
+            iter += 1
         res = re_ords.get_original(res)
 
         # Calculate average speed
@@ -225,5 +228,4 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         }
         log_metrics(**metric_dict)
 
-        pbar.close()
         return res
