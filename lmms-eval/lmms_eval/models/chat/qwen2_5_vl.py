@@ -2,6 +2,12 @@ import time
 import os
 from typing import List
 
+import re
+import json
+import glob
+import numpy as np
+import hashlib
+
 import torch
 from loguru import logger as eval_logger
 from tqdm import tqdm
@@ -29,11 +35,6 @@ def _qwen_prune_verbose() -> bool:
     v = os.environ.get("QWEN_PRUNE_VERBOSE", "0")
     return str(v).strip().lower() in {"1", "true", "t", "yes", "y", "on"}
 
-import re
-import json
-import glob
-import numpy as np
-import hashlib
 
 def load_json_with_fallback(file_path):
     # First: try normal JSON loading
