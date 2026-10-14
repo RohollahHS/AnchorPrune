@@ -151,6 +151,18 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
   ${OPTIONAL_ARGS}
 
 
+################ SBATCH
+# cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
+# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 128 --kmin 20
+
+# cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
+# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 256 --kmin 40
+
+# cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
+# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 512 --kmin 80
+
+################ INTERACTIVE
+
 # k=128
 # kmin=20
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 64 --km 1 --tasks refcoco,refcoco+,refcocog --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
