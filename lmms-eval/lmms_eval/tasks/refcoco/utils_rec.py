@@ -14,13 +14,13 @@ COCO_REC_METRICS = ["IoU", "ACC@0.1", "ACC@0.3", "ACC@0.5", "ACC@0.7", "ACC@0.9"
 # "pixel"      = pixel coords, divide by image dims (Qwen2.5-VL)
 # "scale_1000" = 0-1000 normalized, divide by 1000 (Qwen2-VL, Qwen3-VL, Qwen3.5)
 # "normalized" = already [0,1], no conversion (LLaVA)
-BBOX_COORD_FORMAT = os.environ.get("BBOX_COORD_FORMAT", "normalized")
+BBOX_COORD_FORMAT = os.environ.get("BBOX_COORD_FORMAT", "pixel")
 
 # Prompt style: controls the user instruction sent to the model.
 # "full"  = lmms-eval default Shikra/KOSMOS-2 prompt (long; says "bounded 0-1")
 # "short" = trimmed — drop format spec, keep the ask + caption
 # "nuwa"  = Nuwa official Qwen grounding prompt: "Locate X ... JSON format."
-REFCOCO_PROMPT_STYLE = os.environ.get("REFCOCO_PROMPT_STYLE", "full")
+REFCOCO_PROMPT_STYLE = os.environ.get("REFCOCO_PROMPT_STYLE", "nuwa")
 
 
 def refcoco_bbox_rec_preprocess_dataset(dataset: Dataset):
