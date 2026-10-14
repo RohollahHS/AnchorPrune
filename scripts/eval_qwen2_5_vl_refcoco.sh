@@ -141,7 +141,20 @@ export LMMS_EVAL_DATASETS_CACHE="/scratch/rohhs/huggingface/datasets"
 
 export QA_ID="AnchorPrune_k${K}_kmin${KMIN}_refcoco_refcocoplus_refcocog_pixel_nuwa"
 
-accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
+NUM_MACHINES=${SLURM_NNODES}
+NUM_PROCESSES=$((GPUS_PER_NODE * NUM_MACHINES))
+MAIN_PROCESS_IP=$(scontrol show hostnames "$SLURM_NODELIST" | head -n 1)
+MAIN_PROCESS_PORT=29500
+MACHINE_RANK=${SLURM_NODEID}
+
+accelerate launch \
+  --multi_gpu \
+  --num_machines=${NUM_MACHINES} \
+  --num_processes=${NUM_PROCESSES} \
+  --main_process_ip=${MAIN_PROCESS_IP} \
+  --main_process_port=${MAIN_PROCESS_PORT} \
+  --machine_rank=${MACHINE_RANK} \
+  -m lmms_eval \
   --model qwen2_5_vl \
   --model_args ${MODEL_ARGS} \
   --tasks ${TASKS} \
@@ -153,16 +166,29 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 
 ################ SBATCH
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
-# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 128 --kmin 20
+# k=128
+# kmin=20
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
-# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 256 --kmin 40
+# k=256
+# kmin=40
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
-# sbatch --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k 512 --kmin 80
+# k=512
+# kmin=80
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 ################ INTERACTIVE
 
-# k=128
-# kmin=20
+# k=512
+# kmin=80
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+
+
+
+
+# k=512
+# kmin=80
+# bash ${PROJECTS_DIR}/AnchorPrune/recursive_interactive_eval.sh --k $k --kmin $kmin
