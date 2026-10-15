@@ -58,6 +58,13 @@ ssh "$LOGIN_HOST" "
     nohup proxy --hostname 0.0.0.0 --port 8899 </dev/null >/dev/null 2>&1 &
 " </dev/null >/dev/null 2>&1
 
+export http_proxy=http://${node1}:8899
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+export no_proxy=localhost,127.0.0.1
+export NO_PROXY=localhost,127.0.0.1
+
 cd ${PROJECTS_DIR}/AnchorPrune
 deactivate
 module purge all
