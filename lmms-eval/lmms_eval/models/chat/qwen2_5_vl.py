@@ -111,12 +111,14 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
         RANK = self.RANK
-        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
+        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_0.json")
         print(f"RANK: {RANK} - QA_ID: {QA_ID}")
         print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
         if (self._model is None or os.path.exists(file_path)) and not int(os.getenv("LOCAL", 0)):
             qa = merge_qa_dicts(os.path.dirname(file_path))
             print(f"RANK: {RANK} - reading {len(qa)} qa pairs")
+        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
+        print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
 
         res = []
 
