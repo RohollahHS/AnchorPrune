@@ -319,7 +319,7 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             qa[request_key] = answers[0]
             save_json_file(file_path, qa)
 
-            if self.rank == 0 and iter % 200 == 0:
+            if iter % 200 == 0:
                 print(f"RANK: {self.rank} - [{iter}/{num_iters}] Model Responding..., output: {answers[0]}")
             
             iter += 1
