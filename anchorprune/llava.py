@@ -60,11 +60,7 @@ def _ensure_vision_tower_pruning_helpers(vt) -> None:
             if (self.text_tower is not None) and (self.text_tokenizer is not None) and hasattr(self.vision_tower, "visual_projection"):
                 return
 
-            from transformers import (
-                CLIPTextModelWithProjection,
-                CLIPTokenizerFast,
-                CLIPVisionModelWithProjection,
-            )
+            from transformers import CLIPTextModelWithProjection, CLIPTokenizerFast, CLIPVisionModelWithProjection
 
             vision_with_proj = CLIPVisionModelWithProjection.from_pretrained(self.vision_tower_name, device_map=device_map)
             vp = vision_with_proj.visual_projection.to(device=self.device)
