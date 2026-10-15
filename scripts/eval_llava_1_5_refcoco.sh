@@ -52,6 +52,12 @@ else
     echo "not narv"
 fi
 
+LOGIN_HOST="${SLURM_SUBMIT_HOST}"
+ssh "$LOGIN_HOST" "
+    nohup ssh '$node1' </dev/null >/dev/null 2>&1 &
+    nohup proxy --hostname 0.0.0.0 --port 8899 </dev/null >/dev/null 2>&1 &
+" </dev/null >/dev/null 2>&1
+
 cd ${PROJECTS_DIR}/AnchorPrune
 deactivate
 module purge all
@@ -92,12 +98,6 @@ while [[ $# -gt 0 ]]; do
 done
 
 # ========================================================
-
-LOGIN_HOST="${SLURM_SUBMIT_HOST}"
-ssh "$LOGIN_HOST" "
-    nohup ssh '$node1' </dev/null >/dev/null 2>&1 &
-    nohup proxy --hostname 0.0.0.0 --port 8899 </dev/null >/dev/null 2>&1 &
-" </dev/null >/dev/null 2>&1
 
 REPO_ROOT=${PROJECTS_DIR}/AnchorPrune
 LMMS_ROOT="${REPO_ROOT}/lmms-eval"
