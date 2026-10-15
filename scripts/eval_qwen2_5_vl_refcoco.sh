@@ -109,10 +109,8 @@ OUT_ROOT=/scratch/rohhs/projects/voco_llava/AnchorPrune
 
 OUT="${OUT_ROOT}/${TASKS}/k${K}_kmin${KMIN}"
 
-if [[ "${MODEL,,}" == *qwen* ]]; then
-    export BBOX_COORD_FORMAT=pixel
-    export REFCOCO_PROMPT_STYLE=nuwa
-fi
+export BBOX_COORD_FORMAT=pixel
+export REFCOCO_PROMPT_STYLE=nuwa
 
 export PYTHONPATH="${REPO_ROOT}:${LMMS_ROOT}:${PYTHONPATH:-}"
 
@@ -168,25 +166,23 @@ accelerate launch \
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
 # k=128
 # kmin=20
-# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
 # k=256
 # kmin=40
-# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
 # k=512
 # kmin=80
-# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --nodes=1 --time=12:00:00 myjob.sh --k $k --kmin $kmin
+# sbatch --nodes=2 --job-name=${HEADER}_AnchorPrune_k${k}_kmin${kmin} --time=12:00:00 myjob.sh --k $k --kmin $kmin
 
 ################ INTERACTIVE
 
 # k=512
 # kmin=80
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
-
-
 
 
 # k=512
