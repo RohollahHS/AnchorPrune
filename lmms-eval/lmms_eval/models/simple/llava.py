@@ -404,16 +404,13 @@ class Llava(lmms):
         default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
-        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")
-        if self.rank == 0:
-            print(f"QA_ID: {QA_ID}")
-            print(f"os.path.exists(file_path): {os.path.exists(file_path)}")
-    
+        RANK = int(os.getenv("SLURM_PROCID", "0"))
+        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
+        print(f"RANK: {RANK} - QA_ID: {QA_ID}")
+        print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
         if (self._model is None or os.path.exists(file_path)) and not int(os.getenv("LOCAL", 0)):
             qa = merge_qa_dicts(os.path.dirname(file_path))
-            if self.rank == 0:
-                print(f"reading {len(qa)} qa pairs")
-
+            print(f"RANK: {RANK} - reading {len(qa)} qa pairs")
 
         res = []
 
@@ -571,7 +568,7 @@ class Llava(lmms):
             self.cache_hook.add_partial("generate_until", (context, gen_kwargs), text_outputs)
 
             if iter % 200 == 0:
-                print(f"RANK: {self.rank} - [{iter}/{num_iters}] Model Responding..., output: {text_outputs}")
+                print(f"RANK: {RANK} - [{iter}/{num_iters}] Model Responding..., output: {text_outputs}")
 
             iter += 1
             # pbar.update(1)
