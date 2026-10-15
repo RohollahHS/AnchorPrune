@@ -175,7 +175,7 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 
 # k=512
 # kmin=80
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
 
 
 # k=512
