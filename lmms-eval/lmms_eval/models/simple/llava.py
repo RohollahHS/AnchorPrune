@@ -86,8 +86,9 @@ def load_json_with_fallback(file_path):
     print(f"Recovered {len(data)} valid key/value pairs.")
     return data
 
-def merge_qa_dicts(qa_dir):
-    QA_ID = str(os.getenv("QA_ID", 0))
+def merge_qa_dicts(qa_dir, QA_ID=None):
+    if QA_ID is None:
+        QA_ID = str(os.getenv("QA_ID", 0))
     pattern = os.path.join(qa_dir, f"qa_{QA_ID}_*.json")
     merged = {}
     for file_path in glob.glob(pattern):
@@ -97,7 +98,7 @@ def merge_qa_dicts(qa_dir):
             f"{50*'='}"
         )
         data = load_json_with_fallback(file_path)
-        merged.update(data)   # merges dictionaries
+        merged.update(data)
     return merged
 
 
@@ -411,11 +412,8 @@ class Llava(lmms):
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
         RANK = self.RANK
-        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_0.json")
-        print(f"RANK: {RANK} - QA_ID: {QA_ID}")
-        print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
-        if (self._model is None or os.path.exists(file_path)) and not int(os.getenv("LOCAL", 0)):
-            qa = merge_qa_dicts(os.path.dirname(file_path))
+        if not int(os.getenv("LOCAL", 0)):
+            qa = merge_qa_dicts(default_save_dir, QA_ID)
             print(f"RANK: {RANK} - reading {len(qa)} qa pairs")
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
         print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
