@@ -180,7 +180,9 @@ class Llava(lmms):
                 self._device = torch.device(f"cuda:{env_local_rank}")
                 self.device_map = f"cuda:{env_local_rank}"
         
+        print(f"self.device_map: {self.device_map}")
         self.RANK = int(self.device_map.split(":")[-1])
+        print(f"self.RANK: {self.RANK}")
 
         llava_model_args = {
             "multimodal": True,
