@@ -448,13 +448,10 @@ class Llava(lmms):
                 img_key = image_to_key(flattened_visuals[0])
             else:
                 img_key = str(doc_id[0])
-            if iter in [0, 10, 200]:
-                print(img_key)
             request_key = contexts[0].replace(" ", "_") + "_" + img_key
 
             if request_key in qa.keys():
                 res.append(qa[request_key])
-                iter += 1
                 continue
 
             # Set default values for until and max_new_tokens
