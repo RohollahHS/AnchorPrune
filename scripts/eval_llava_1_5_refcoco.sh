@@ -141,7 +141,7 @@ export GPUS_PER_NODE=$(nvidia-smi -L | wc -l)
 
 # export TRANSFORMERS_OFFLINE=1
 # export HF_HUB_OFFLINE=1
-# export HF_DATASETS_OFFLINE=1
+export HF_DATASETS_OFFLINE=1
 export LMMS_EVAL_DATASETS_CACHE="/scratch/rohhs/huggingface/datasets"
 
 export QA_ID="AnchorPrune_llava_k${K}_kmin${KMIN}_refcoco_refcocoplus_refcocog_pixel_nuwa"
