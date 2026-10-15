@@ -8,9 +8,7 @@ while true; do
          --mail-user=rohollah903@gmail.com --mail-type=ALL \
     srun --overlap bash -c '
       start=$SECONDS
-      k=128
-      kmin=20
-      timeout -k 60 55m bash bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log" 2>&1
+      timeout -k 60 55m bash bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco,refcoco+,refcocog.log" 2>&1
       [ $((SECONDS - start)) -lt 3000 ] && exit 0 || exit 100
     '
   [ $? -eq 100 ] || break
