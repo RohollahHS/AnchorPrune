@@ -433,7 +433,8 @@ class Llava(lmms):
         re_ords = utils.Collator([reg.args for reg in requests], _collate, grouping=True)
         chunks = re_ords.get_batched(n=self.batch_size, batch_fn=None)
         num_iters = len(requests) // self.batch_size if len(requests) % self.batch_size == 0 else len(requests) // self.batch_size + 1
-        pbar = tqdm(total=num_iters, disable=(self.rank != 0), desc="Model Responding")
+        # pbar = tqdm(total=num_iters, disable=(self.rank != 0), desc="Model Responding")
+        iter = 0
         for chunk in chunks:
             contexts, all_gen_kwargs, doc_to_visual, doc_id, task, split = zip(*chunk)
             task = task[0]
@@ -452,7 +453,7 @@ class Llava(lmms):
 
             if request_key in qa.keys():
                 res.append(qa[request_key])
-                pbar.update(1)
+                iter += 1
                 continue
 
             # Set default values for until and max_new_tokens
@@ -568,12 +569,16 @@ class Llava(lmms):
 
             res.extend(text_outputs)
             self.cache_hook.add_partial("generate_until", (context, gen_kwargs), text_outputs)
-            pbar.update(1)
 
+            if self.rank == 0 and iter % 200 == 0:
+                print(f"[{iter}/{num_iters}] Model Responding..., output: {text_outputs}")
+
+            iter += 1
+            # pbar.update(1)
             # reorder this group of results back to original unsorted form
         res = re_ords.get_original(res)
 
-        pbar.close()
+        # pbar.close()
         return res
 
     def generate_until_multi_round(self, requests) -> List[str]:
