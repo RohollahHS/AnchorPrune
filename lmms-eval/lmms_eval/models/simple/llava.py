@@ -405,7 +405,6 @@ class Llava(lmms):
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")
-        request_keys = []
         if self.rank == 0:
             print(f"QA_ID: {QA_ID}")
             print(f"os.path.exists(file_path): {os.path.exists(file_path)}")
@@ -414,7 +413,6 @@ class Llava(lmms):
             qa = merge_qa_dicts(os.path.dirname(file_path))
             if self.rank == 0:
                 print(f"reading {len(qa)} qa pairs")
-            request_keys = list(qa.keys())
 
 
         res = []
@@ -453,6 +451,11 @@ class Llava(lmms):
             if iter in [0, 10, 200]:
                 print(img_key)
             request_key = contexts[0].replace(" ", "_") + "_" + img_key
+
+            if request_key in qa.keys():
+                res.append(qa[request_key])
+                iter += 1
+                continue
 
             # Set default values for until and max_new_tokens
             until = [self.tok_decode(self.eot_token_id)]

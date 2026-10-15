@@ -111,7 +111,6 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")
-        request_keys = []
         if self.rank == 0:
             print(f"QA_ID: {QA_ID}")
             print(f"os.path.exists(file_path): {os.path.exists(file_path)}")
@@ -120,7 +119,6 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             qa = merge_qa_dicts(os.path.dirname(file_path))
             if self.rank == 0:
                 print(f"reading {len(qa)} qa pairs")
-            request_keys = list(qa.keys())
 
 
         res = []
@@ -172,8 +170,6 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             else:
                 img_key = image_to_key(visuals)
             request_key = ctx[0].replace(" ", "_") + "_" + str(doc_id[0]) + "_" + img_key
-
-            request_keys.append(request_key)
 
             if request_key in qa.keys():
                 res.append(qa[request_key])
