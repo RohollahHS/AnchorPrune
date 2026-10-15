@@ -8,7 +8,7 @@ while true; do
     srun --overlap bash -c '
       start=$SECONDS
       set -o pipefail
-      timeout -k 60 55m bash "${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh" --k 128 --kmin 20 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco,refcoco+,refcocog.log"
+      timeout -k 60 55m bash "${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh" --tasks refcoco --k 128 --kmin 20 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco,refcoco+,refcocog.log"
       [ $((SECONDS - start)) -lt 3000 ] && exit 0 || exit 100
     '
   [ $? -eq 100 ] || break
