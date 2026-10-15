@@ -180,8 +180,8 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 
 ################ INTERACTIVE
 
-# k=512
-# kmin=80
+# k=128
+# kmin=20
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
 
 
