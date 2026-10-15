@@ -77,6 +77,10 @@ class Qwen2_5_VL(lmms):
             self._device = torch.device(device)
             self.device_map = device_map if device_map else device
 
+        print(f"self.device_map: {self.device_map}")
+        self.RANK = int(self.device_map.split(":")[-1])
+        print(f"self.RANK: {self.RANK}")
+
         # Prepare model loading arguments
         model_kwargs = {
             "torch_dtype": "bfloat16",

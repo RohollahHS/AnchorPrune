@@ -110,7 +110,7 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
         default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
-        RANK = int(os.getenv("SLURM_PROCID", "0"))
+        RANK = self.RANK
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
         print(f"RANK: {RANK} - QA_ID: {QA_ID}")
         print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
