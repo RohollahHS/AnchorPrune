@@ -571,7 +571,7 @@ class Llava(lmms):
             self.cache_hook.add_partial("generate_until", (context, gen_kwargs), text_outputs)
 
             if self.rank == 0 and iter % 200 == 0:
-                print(f"[{iter}/{num_iters}] Model Responding..., output: {text_outputs}")
+                print(f"RANK: {self.rank} - [{iter}/{num_iters}] Model Responding..., output: {text_outputs}")
 
             iter += 1
             # pbar.update(1)
