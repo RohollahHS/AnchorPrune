@@ -452,6 +452,7 @@ class Llava(lmms):
 
             if request_key in qa.keys():
                 res.append(qa[request_key])
+                pbar.update(1)
                 continue
 
             # Set default values for until and max_new_tokens
