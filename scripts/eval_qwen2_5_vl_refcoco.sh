@@ -145,14 +145,7 @@ MAIN_PROCESS_IP=$(scontrol show hostnames "$SLURM_NODELIST" | head -n 1)
 MAIN_PROCESS_PORT=29500
 MACHINE_RANK=${SLURM_NODEID}
 
-accelerate launch \
-  --multi_gpu \
-  --num_machines=${NUM_MACHINES} \
-  --num_processes=${NUM_PROCESSES} \
-  --main_process_ip=${MAIN_PROCESS_IP} \
-  --main_process_port=${MAIN_PROCESS_PORT} \
-  --machine_rank=${MACHINE_RANK} \
-  -m lmms_eval \
+accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
   --model qwen2_5_vl \
   --model_args ${MODEL_ARGS} \
   --tasks ${TASKS} \
