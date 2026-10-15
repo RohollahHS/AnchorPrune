@@ -180,10 +180,13 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 
 ################ INTERACTIVE
 
-# k=512
-# kmin=80
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco,refcoco+,refcocog.log"
 
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 256 --kmin 40 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k256_kmin40_refcoco,refcoco+,refcocog.log"
+
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 512 --kmin 80 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k512_kmin80_refcoco,refcoco+,refcocog.log"
+
+######################
 
 # k=512
 # kmin=80

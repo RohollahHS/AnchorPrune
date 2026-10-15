@@ -47,6 +47,77 @@ else:
 
 from anchorprune.llava import _to_bool, patch_llava_model_for_pruning
 
+import re
+import json
+import glob
+import numpy as np
+import hashlib
+
+
+def load_json_with_fallback(file_path):
+    # First: try normal JSON loading
+    try:
+        with open(file_path, "r") as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Warning: invalid JSON in {file_path}")
+        print(f"JSON error: {e}")
+        print("Attempting to recover valid key/value pairs...")
+    # Fallback: recover valid "key": value pairs
+    data = {}
+    # Match lines containing a valid JSON string key followed by a value.
+    pattern = re.compile(r'^\s*"((?:\\.|[^"\\])*)"\s*:\s*(.*?)(?:,\s*)?$')
+    with open(file_path, "r") as f:
+        for line_number, line in enumerate(f, 1):
+            match = pattern.match(line)
+            if not match:
+                continue
+            key = match.group(1)
+            value_str = match.group(2).strip()
+            try:
+                # Decode the JSON key properly
+                key = json.loads(f'"{key}"')
+                # Decode the value
+                value = json.loads(value_str)
+                data[key] = value
+            except json.JSONDecodeError:
+                # Invalid key/value -> discard it
+                continue
+    print(f"Recovered {len(data)} valid key/value pairs.")
+    return data
+
+def merge_qa_dicts(qa_dir):
+    QA_ID = str(os.getenv("QA_ID", 0))
+    pattern = os.path.join(qa_dir, f"qa_{QA_ID}_*.json")
+    merged = {}
+    for file_path in glob.glob(pattern):
+        print(
+            f"{50*'='}\n"
+            f"Loading... {file_path}\n"
+            f"{50*'='}"
+        )
+        data = load_json_with_fallback(file_path)
+        merged.update(data)   # merges dictionaries
+    return merged
+
+
+def save_json_file(file_path, data):
+    with open(file_path, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+def image_to_key(img):
+    img_array = np.array(img)
+    return hashlib.sha256(img_array.tobytes()).hexdigest()
+
+
+def format_time(seconds):
+    """Convert seconds to HH:MM:SS string."""
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    secs = int(seconds % 60)
+    return f"{hours:02d}:{minutes:02d}:{secs:02d}"
+
 
 @register_model("llava")
 class Llava(lmms):
@@ -329,6 +400,23 @@ class Llava(lmms):
         return new_list
 
     def generate_until(self, requests: List[Instance]) -> List[str]:
+        qa = {}
+        default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
+        os.makedirs(default_save_dir, exist_ok=True)
+        QA_ID = str(os.getenv('QA_ID', 0))
+        file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{self.rank}.json")
+        request_keys = []
+        if self.rank == 0:
+            print(f"QA_ID: {QA_ID}")
+            print(f"os.path.exists(file_path): {os.path.exists(file_path)}")
+    
+        if (self._model is None or os.path.exists(file_path)) and not int(os.getenv("LOCAL", 0)):
+            qa = merge_qa_dicts(os.path.dirname(file_path))
+            if self.rank == 0:
+                print(f"reading {len(qa)} qa pairs")
+            request_keys = list(qa.keys())
+
+
         res = []
 
         def _collate(x):
@@ -357,6 +445,14 @@ class Llava(lmms):
             # we assume all gen kwargs in the batch are the same
             # this is safe to assume because the `grouper` object ensures it.
             gen_kwargs = all_gen_kwargs[0]
+
+            if flattened_visuals:
+                img_key = image_to_key(flattened_visuals[0])
+            else:
+                img_key = str(doc_id[0])
+            if iter in [0, 10, 200]:
+                print(img_key)
+            request_key = contexts[0].replace(" ", "_") + "_" + img_key
 
             # Set default values for until and max_new_tokens
             until = [self.tok_decode(self.eot_token_id)]
@@ -466,9 +562,13 @@ class Llava(lmms):
             #             # ignore '' separator,
             #             # for seq2seq case where self.tok_decode(self.eot_token_id) = ''
             #             text_outputs = text_outputs.split(term)[0]
+            qa[request_key] = text_outputs[0]
+            save_json_file(file_path, qa)
+
             res.extend(text_outputs)
             self.cache_hook.add_partial("generate_until", (context, gen_kwargs), text_outputs)
             pbar.update(1)
+
             # reorder this group of results back to original unsorted form
         res = re_ords.get_original(res)
 

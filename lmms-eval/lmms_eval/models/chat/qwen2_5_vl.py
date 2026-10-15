@@ -106,12 +106,6 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
     is_simple = False
 
     def generate_until(self, requests: List[Instance]) -> List[GenerationResult]:
-        res = []
-
-        # A dummy collate here to sort by doc id
-        def _collate(x):
-            return x[0], x[0]
-
         qa = {}
         default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
         os.makedirs(default_save_dir, exist_ok=True)
@@ -127,6 +121,13 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
             if self.rank == 0:
                 print(f"reading {len(qa)} qa pairs")
             request_keys = list(qa.keys())
+
+
+        res = []
+
+        # A dummy collate here to sort by doc id
+        def _collate(x):
+            return x[0], x[0]
 
         # we group requests by their generation_kwargs,
         # so that we don't try to execute e.g. greedy sampling and temp=0.8 sampling
