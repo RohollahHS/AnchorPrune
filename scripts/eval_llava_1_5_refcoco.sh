@@ -52,18 +52,18 @@ else
     echo "not narv"
 fi
 
-LOGIN_HOST="${SLURM_SUBMIT_HOST}"
-ssh "$LOGIN_HOST" "
-    nohup ssh '$node1' </dev/null >/dev/null 2>&1 &
-    nohup proxy --hostname 0.0.0.0 --port 8899 </dev/null >/dev/null 2>&1 &
-" </dev/null >/dev/null 2>&1
+# LOGIN_HOST="${SLURM_SUBMIT_HOST}"
+# ssh "$LOGIN_HOST" "
+#     nohup ssh '$node1' </dev/null >/dev/null 2>&1 &
+#     nohup proxy --hostname 0.0.0.0 --port 8899 </dev/null >/dev/null 2>&1 &
+# " </dev/null >/dev/null 2>&1
 
-export http_proxy=http://${node1}:8899
-export https_proxy=$http_proxy
-export HTTP_PROXY=$http_proxy
-export HTTPS_PROXY=$http_proxy
-export no_proxy=localhost,127.0.0.1
-export NO_PROXY=localhost,127.0.0.1
+# export http_proxy=http://${node1}:8899
+# export https_proxy=$http_proxy
+# export HTTP_PROXY=$http_proxy
+# export HTTPS_PROXY=$http_proxy
+# export no_proxy=localhost,127.0.0.1
+# export NO_PROXY=localhost,127.0.0.1
 
 cd ${PROJECTS_DIR}/AnchorPrune
 deactivate
@@ -139,8 +139,8 @@ export SAVE_LOGS_DIR=${OUTPUT_DIR}/AnchorPrune/eval_logs
 
 export GPUS_PER_NODE=$(nvidia-smi -L | wc -l)
 
-# export TRANSFORMERS_OFFLINE=1
-# export HF_HUB_OFFLINE=1
+export TRANSFORMERS_OFFLINE=1
+export HF_HUB_OFFLINE=1
 export HF_DATASETS_OFFLINE=1
 export LMMS_EVAL_DATASETS_CACHE="/scratch/rohhs/huggingface/datasets"
 
