@@ -179,6 +179,8 @@ class Llava(lmms):
             else:
                 self._device = torch.device(f"cuda:{env_local_rank}")
                 self.device_map = f"cuda:{env_local_rank}"
+        
+        self.RANK = int(self.device_map.split(":")[-1])
 
         llava_model_args = {
             "multimodal": True,
@@ -404,7 +406,7 @@ class Llava(lmms):
         default_save_dir = os.path.join(os.getenv("SAVE_LOGS_DIR"), 'eval_logs', 'question_answer_pairs')
         os.makedirs(default_save_dir, exist_ok=True)
         QA_ID = str(os.getenv('QA_ID', 0))
-        RANK = int(os.getenv("SLURM_PROCID", "0"))
+        RANK = self.RANK
         file_path = os.path.join(default_save_dir, f"qa_{QA_ID}_{RANK}.json")
         print(f"RANK: {RANK} - QA_ID: {QA_ID}")
         print(f"RANK: {RANK} - os.path.exists(file_path): {os.path.exists(file_path)}")
