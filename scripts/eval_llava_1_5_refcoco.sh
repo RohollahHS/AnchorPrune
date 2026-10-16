@@ -181,12 +181,12 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 ################ INTERACTIVE
 
 #### bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 --tasks refcoco 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco.log"
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco+.log"
+#### bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcoco+.log"
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 128 --kmin 20 --tasks refcocog 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k128_kmin20_refcocog.log"
 
 ##### bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 256 --kmin 40 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k256_kmin40_refcoco,refcoco+,refcocog.log"
 
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 512 --kmin 80 --tasks refcoco 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k512_kmin80_refcoco.log"
+#### bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 512 --kmin 80 --tasks refcoco 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k512_kmin80_refcoco.log"
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 512 --kmin 80 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k512_kmin80_refcoco+.log"
 # bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_llava_1_5_refcoco.sh --k 512 --kmin 80 --tasks refcocog 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_llava_k512_kmin80_refcocog.log"
 

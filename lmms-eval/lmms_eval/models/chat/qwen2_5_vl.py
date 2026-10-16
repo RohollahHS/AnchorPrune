@@ -318,7 +318,6 @@ class Qwen2_5_VL(Qwen2_5_VLSimple):
 
             if iter % 200 == 0:
                 print(f"RANK: {RANK} - [{iter}/{num_iters}] Model Responding..., output: {answers[0]}")
-            
             iter += 1
 
         res = re_ords.get_original(res)
