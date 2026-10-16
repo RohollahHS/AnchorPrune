@@ -1,0 +1,103 @@
+llava-v1.5-7b,prune_k_total=256,prune_anchor_k=40
+|          Tasks           |Filter|n-shot|      Metric      |   |Value |   |Stderr|
+|--------------------------|------|-----:|------------------|---|-----:|---|------|
+|refcoco                   |      |      |                  |   |      |±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_ACC@0.1   |↑  |0.7825|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_ACC@0.3   |↑  |0.4667|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_ACC@0.5   |↑  |0.1327|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_ACC@0.7   |↑  |0.0156|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_ACC@0.9   |↑  |0.0002|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_Center_ACC|↑  |0.6283|±  |N/A   |
+| - refcoco_bbox_rec_test  |none  |     0|refcoco_IoU       |↑  |0.2816|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_ACC@0.1   |↑  |0.8193|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_ACC@0.3   |↑  |0.4944|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_ACC@0.5   |↑  |0.1469|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_ACC@0.7   |↑  |0.0133|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_ACC@0.9   |↑  |0.0000|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_Center_ACC|↑  |0.6611|±  |N/A   |
+| - refcoco_bbox_rec_testA |none  |     0|refcoco_IoU       |↑  |0.2966|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_ACC@0.1   |↑  |0.7513|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_ACC@0.3   |↑  |0.4175|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_ACC@0.5   |↑  |0.1191|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_ACC@0.7   |↑  |0.0130|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_ACC@0.9   |↑  |0.0004|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_Center_ACC|↑  |0.5890|±  |N/A   |
+| - refcoco_bbox_rec_testB |none  |     0|refcoco_IoU       |↑  |0.2615|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_ACC@0.1   |↑  |0.7668|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_ACC@0.3   |↑  |0.4488|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_ACC@0.5   |↑  |0.1273|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_ACC@0.7   |↑  |0.0118|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_ACC@0.9   |↑  |0.0009|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_Center_ACC|↑  |0.6136|±  |N/A   |
+| - refcoco_bbox_rec_val   |none  |     0|refcoco_IoU       |↑  |0.2733|±  |N/A   |
+|refcoco+                  |      |      |                  |   |      |±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_ACC@0.1   |↑  |0.7478|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_ACC@0.3   |↑  |0.4438|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_ACC@0.5   |↑  |0.1292|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_ACC@0.7   |↑  |0.0122|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_ACC@0.9   |↑  |0.0003|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_Center_ACC|↑  |0.5871|±  |N/A   |
+| - refcoco+_bbox_rec_testA|none  |     0|refcoco_IoU       |↑  |0.2683|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_ACC@0.1   |↑  |0.6519|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_ACC@0.3   |↑  |0.3541|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_ACC@0.5   |↑  |0.0994|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_ACC@0.7   |↑  |0.0139|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_ACC@0.9   |↑  |0.0002|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_Center_ACC|↑  |0.4782|±  |N/A   |
+| - refcoco+_bbox_rec_testB|none  |     0|refcoco_IoU       |↑  |0.2266|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_ACC@0.1   |↑  |0.6756|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_ACC@0.3   |↑  |0.3953|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_ACC@0.5   |↑  |0.1123|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_ACC@0.7   |↑  |0.0094|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_ACC@0.9   |↑  |0.0008|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_Center_ACC|↑  |0.5249|±  |N/A   |
+| - refcoco+_bbox_rec_val  |none  |     0|refcoco_IoU       |↑  |0.2401|±  |N/A   |
+|refcocog                  |      |      |                  |   |      |±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_ACC@0.1   |↑  |0.6910|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_ACC@0.3   |↑  |0.3933|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_ACC@0.5   |↑  |0.1107|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_ACC@0.7   |↑  |0.0123|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_ACC@0.9   |↑  |0.0007|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_Center_ACC|↑  |0.5371|±  |N/A   |
+| - refcocog_bbox_rec_test |none  |     0|refcoco_IoU       |↑  |0.2439|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_ACC@0.1   |↑  |0.7021|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_ACC@0.3   |↑  |0.3989|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_ACC@0.5   |↑  |0.1141|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_ACC@0.7   |↑  |0.0157|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_ACC@0.9   |↑  |0.0012|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_Center_ACC|↑  |0.5486|±  |N/A   |
+| - refcocog_bbox_rec_val  |none  |     0|refcoco_IoU       |↑  |0.2488|±  |N/A   |
+
+llava-v1.5-7b,,prune_k_total=128,prune_anchor_k=20
+|          Tasks          |Filter|n-shot|      Metric      |   |Value |   |Stderr|
+|-------------------------|------|-----:|------------------|---|-----:|---|------|
+|refcoco                  |      |      |                  |   |      |±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_ACC@0.1   |↑  |0.6450|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_ACC@0.3   |↑  |0.2888|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_ACC@0.5   |↑  |0.0463|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_ACC@0.7   |↑  |0.0061|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_ACC@0.9   |↑  |0.0008|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_Center_ACC|↑  |0.5045|±  |N/A   |
+| - refcoco_bbox_rec_test |none  |     0|refcoco_IoU       |↑  |0.2000|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_ACC@0.1   |↑  |0.6954|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_ACC@0.3   |↑  |0.3127|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_ACC@0.5   |↑  |0.0453|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_ACC@0.7   |↑  |0.0044|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_ACC@0.9   |↑  |0.0007|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_Center_ACC|↑  |0.5605|±  |N/A   |
+| - refcoco_bbox_rec_testA|none  |     0|refcoco_IoU       |↑  |0.2126|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_ACC@0.1   |↑  |0.6153|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_ACC@0.3   |↑  |0.2893|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_ACC@0.5   |↑  |0.0605|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_ACC@0.7   |↑  |0.0082|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_ACC@0.9   |↑  |0.0004|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_Center_ACC|↑  |0.4740|±  |N/A   |
+| - refcoco_bbox_rec_testB|none  |     0|refcoco_IoU       |↑  |0.1970|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_ACC@0.1   |↑  |0.6389|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_ACC@0.3   |↑  |0.2793|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_ACC@0.5   |↑  |0.0436|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_ACC@0.7   |↑  |0.0059|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_ACC@0.9   |↑  |0.0006|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_Center_ACC|↑  |0.5012|±  |N/A   |
+| - refcoco_bbox_rec_val  |none  |     0|refcoco_IoU       |↑  |0.1962|±  |N/A   |
+
