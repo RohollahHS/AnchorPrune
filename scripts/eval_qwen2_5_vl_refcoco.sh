@@ -77,6 +77,7 @@ K="64"
 KMIN="1"
 TASKS=refcoco,refcoco+,refcocog
 OPTIONAL_ARGS=""
+CANCEL=0
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -90,6 +91,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --t|--tasks)
       TASKS="$2"
+      shift 2
+      ;;
+    --c|--cancel)
+      CANCEL="$2"
       shift 2
       ;;
     --a|--args)
@@ -162,6 +167,11 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
   ${OPTIONAL_ARGS}
 
 
+if (( CANCEL == 1 )); then
+  scancel $SLURM_JOB_ID
+fi
+
+
 ################ SBATCH
 # cat scripts/headers/${HEADER}.sh scripts/eval_qwen2_5_vl_refcoco.sh > myjob.sh
 # k=128
@@ -180,17 +190,17 @@ accelerate launch --num_processes=${GPUS_PER_NODE} -m lmms_eval \
 
 ################ INTERACTIVE
 
-# k=128
-# kmin=20
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 128 --kmin 20 --c 1 --tasks refcoco  2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k128_kmin20_refcoco.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 128 --kmin 20 --c 1 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k128_kmin20_refcoco+.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 128 --kmin 20 --c 1 --tasks refcocog 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k128_kmin20_refcocog.log"
 
-# k=256
-# kmin=40
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 256 --kmin 40 --c 1 --tasks refcoco  2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k256_kmin40_refcoco.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 256 --kmin 40 --c 1 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k256_kmin40_refcoco+.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 256 --kmin 40 --c 1 --tasks refcocog 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k256_kmin40_refcocog.log"
 
-# k=512
-# kmin=80
-# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k $k --kmin $kmin 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k${k}_kmin${kmin}_refcoco,refcoco+,refcocog.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 512 --kmin 80 --c 1 --tasks refcoco  2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k512_kmin80_refcoco.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 512 --kmin 80 --c 1 --tasks refcoco+ 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k512_kmin80_refcoco+.log"
+# bash ${PROJECTS_DIR}/AnchorPrune/scripts/eval_qwen2_5_vl_refcoco.sh --k 512 --kmin 80 --c 1 --tasks refcocog 2>&1 | tee "$SLURM_OUTPUTS/AnchorPrune_k512_kmin80_refcocog.log"
 
 ################ RECURSIVE
 
